@@ -7,23 +7,35 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="canvas"></div>
+    <canvas id="canvas" width="100" height="100"></canvas>
     <script>
-      canvas.onclick = e => {
-        console.log(e.clientX);
-        console.log(e.clientY);
-        //console.log调试大法
-        let div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.left = e.clientX + "px";
-        div.style.top = e.clientY + "px";
-        div.style.width = "6px";
-        div.style.height = "6px";
-        div.style.marginLeft = "-3px";
-        div.style.marginTop = "-3px";
-        div.style.borderRadius = "50%";
-        div.style.backgroundColor = "black";
-        canvas.appendChild(div);
+      //画线
+      let canvas = document.getElementById("canvas");
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      //通过id找到canvas
+      let ctx = canvas.getContext("2d");
+      let painting = false;
+      //ctx.fillStyle = "rgb(200,0,0)"; 填充样式，改变颜色
+      // ctx.fillRect(20, 20, 65, 60); 填充矩形,(起始横坐标，启示纵坐标，宽，高)，感觉是左边和上边是由起始坐标定着的，改变宽高的时候左边与上边不变。
+      ctx.fillStyle = "black";
+      ctx.strokeStyle = "none";
+      canvas.onmousedown = () => {
+        painting = true;
+      };
+      canvas.onmousemove = e => {
+        if (painting === true) {
+          ctx.beginPath();
+          //ctx.arc(75, 75, 50, 0, 2 * Math.PI);(圆心横坐标，圆心纵坐标，半径，开始角度，结束角度)
+          ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.fill();
+        } else {
+          console.log("什么都不做");
+        }
+      };
+      canvas.onmouseup = () => {
+        painting = false;
       };
     </script>
   </body>
