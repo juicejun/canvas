@@ -11,32 +11,72 @@
     <script>
       //画线
       let canvas = document.getElementById("canvas");
+      //通过id找到canvas
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight;
-      //通过id找到canvas
+
       let ctx = canvas.getContext("2d");
+
+      /* ctx.beginPath();
+           ctx.moveTo(125, 125); //将端点移到（125，125）
+           ctx.lineTo(125, 45); //从端点画一条线到（125，45）
+           ctx.lineTo(45, 125); //到了（125，45）再往（45，125）画一条线
+           ctx.closePath(); //闭合路径，将起点与终点连线
+           ctx.stroke(); //描边 */
+
+      function drawLine(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
       let painting = false;
+      let last;
       //ctx.fillStyle = "rgb(200,0,0)"; 填充样式，改变颜色
       // ctx.fillRect(20, 20, 65, 60); 填充矩形,(起始横坐标，启示纵坐标，宽，高)，感觉是左边和上边是由起始坐标定着的，改变宽高的时候左边与上边不变。
       ctx.fillStyle = "black";
       ctx.strokeStyle = "none";
-      canvas.onmousedown = () => {
-        painting = true;
-      };
-      canvas.onmousemove = e => {
-        if (painting === true) {
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+
+      var isTouchDevice = "ontouchstart" in document.documentElement;
+      if (isTouchDevice) {
+        canvas.ontouchstart = e => {
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          last = [x, y];
+        };
+        canvas.ontouchmove = e => {
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          console.log(x, y);
+          drawLine(last[0], last[1], x, y);
+          last = [x, y];
+          /* 画圆
           ctx.beginPath();
-          //ctx.arc(75, 75, 50, 0, 2 * Math.PI);(圆心横坐标，圆心纵坐标，半径，开始角度，结束角度)
-          ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
+          ctx.arc(75, 75, 50, 0, 2 * Math.PI);(圆心横坐标，圆心纵坐标，半径，开始角度，结束角度)
+          ctx.arc(x, y, 10, 0, 2 * Math.PI);
           ctx.stroke();
-          ctx.fill();
-        } else {
-          console.log("什么都不做");
-        }
-      };
-      canvas.onmouseup = () => {
-        painting = false;
-      };
+          ctx.fill(); */
+        };
+      } else {
+        canvas.onmousedown = e => {
+          painting = true;
+          last = [e.clientX, e.clientY];
+          console.log(last);
+        };
+        canvas.onmousemove = e => {
+          if (painting === true) {
+            console.log(last);
+            drawLine(last[0], last[1], e.clientX, e.clientY);
+            last = [e.clientX, e.clientY];
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
     </script>
   </body>
 </html>
